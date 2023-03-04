@@ -2,6 +2,8 @@ package com.bug.note.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,12 @@ public class NoteService {
 		return noteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 글은 없습니다."));
 	}
 	
+	@Transactional(readOnly = true)
+	public Page<Note> getPagingAndSearchNotes(Pageable pageable, String searchText) {
+		
+		return noteRepository.findByTitleContainingOrContentContaining(pageable, searchText, searchText);
+	}
+	
 	@Transactional
 	public Note saveNote(Note note) {
 		return noteRepository.save(note);
@@ -33,6 +41,9 @@ public class NoteService {
 	
 	@Transactional
 	public Note modifyNote(Note note) {
+		
+		System.out.println(note.getTitle());
+		System.out.println(note.getContent());
 		Note noteEntity = noteRepository.findById(note.getId()).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 글은 없습니다."));
 		
 		noteEntity.setTitle(note.getTitle());
