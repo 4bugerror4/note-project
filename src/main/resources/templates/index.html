@@ -13,6 +13,7 @@
 		<div class="list-group list-group-horizontal d-flex justify-content-end">
 			<div sec:authorize="isAuthenticated()">
 				<button type="button" class="btn btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">글 쓰기</button>
+				<a th:href="@{/board}" class="btn btn-outline-primary">게시판/자료실</a>
 				<a th:href="@{/logout}" class="btn btn-outline-primary">로그아웃</a>
 			</div>
 			<div sec:authorize="!isAuthenticated()">
