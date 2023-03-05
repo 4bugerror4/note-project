@@ -12,8 +12,8 @@
 		<!-- 메뉴바 -->
 		<div class="list-group list-group-horizontal d-flex justify-content-end">
 			<div sec:authorize="isAuthenticated()">
-				<a th:href="@{/board/write}" class="btn btn-outline-primary me-1">게시글 쓰기</a>
-				<a th:href="@{/board}" class="btn btn-outline-primary">게시판/자료실</a> <a th:href="@{/logout}" class="btn btn-outline-primary">로그아웃</a>
+				<a th:href="@{/board/write}" class="btn btn-outline-primary me-1">게시글 쓰기</a> <a th:href="@{/board}" class="btn btn-outline-primary">게시판/자료실</a> <a th:href="@{/logout}"
+					class="btn btn-outline-primary">로그아웃</a>
 			</div>
 			<div sec:authorize="!isAuthenticated()">
 				<a th:href="@{/auth/login}" class="btn btn-outline-primary">로그인</a> <a th:href="@{/auth/join}" class="btn btn-outline-primary">회원가입</a>
@@ -22,20 +22,19 @@
 		<!-- // 메뉴바 -->
 
 		<h1 class="text-center my-5">게시 글 보기</h1>
-		
+
 		<div class="mb-3">
 			<input type="hidden" id="id" />
 			<label for="title" class="form-label">제목</label>
 			<input type="text" class="form-control" id="title" th:value="${board.title}" readonly="readonly">
 		</div>
-		
+
 		<div class="mb-3">
 			<label for="content" class="form-label">내용</label>
 			<textarea class="form-control" id="content" rows="10" th:text="${board.content}" readonly="readonly"></textarea>
 		</div>
 		<div class="text-end">
-			<a th:href="@{/board/modify/{id}(id = ${board.id})}" class="btn btn-warning">수정하기</a>
-			<a th:href="@{/board}" class="btn btn-secondary">돌아가기</a>
+			<a th:href="@{/board/modify/{id}(id = ${board.id})}" class="btn btn-warning">수정하기</a> <a th:href="@{/board}" class="btn btn-secondary">돌아가기</a>
 		</div>
 
 		<!-- 댓글 -->
@@ -44,6 +43,7 @@
 				<div>댓글 작성</div>
 			</div>
 			<div class="card-body">
+				<input type="hidden" id="boardId" th:value="${board.id}" />
 				<textarea id="comment" rows="1" class="form-control"></textarea>
 			</div>
 			<div class="card-footer text-end">
@@ -53,15 +53,36 @@
 
 		<div class="card my-3" id="replyForm">
 			<div class="card-header">댓글 리스트</div>
-			<ul id="replys-box" class="list-group">
-				<li class="list-group-item d-flex justify-content-between my-1"><input type="hidden"/>
-					<div>댓글 출력 위치입니다.</div>
-					<div class="d-flex">
-						<div class="font-italic">
-							작성자 : <span ></span> &nbsp
+			<ul class="list-group list-group-flush" th:each="reply : ${board.replys}">
+				<li class="list-group-item">
+					<div class="d-flex justify-content-between">
+						<div style="display: inline-block;" th:text=${reply.comment}>An item</div>
+						<div style="display: inline-block;">
+							<span>작성자 : <span th:text="${reply.user.username}"></span></span>
+							<button class="badge btn btn-info" data-bs-toggle="collapse" th:attr="data-bs-target=|#childReply${reply.id}|" aria-expanded="false" aria-controls="childReply">댓글</button>
+							<button class="badge btn btn-warning" data-bs-toggle="collapse" th:attr="data-bs-target=|#modifyReply${reply.id}|" aria-expanded="false" aria-controls="modifyReply">수정</button>
+							<button class="badge btn btn-danger" th:replyId="${reply.id}" th:onclick="replyDelete(this.getAttribute('replyId'))">삭제</button>
 						</div>
-						<button class="badge btn btn-danger" type="button" th:onclick="replyDelete()">삭제</button>
 					</div>
+					<div class="collapse mt-2" th:id="|childReply${reply.id}|">
+						<div class="card card-body">
+							<div class="row">
+								<input type="text" class="col-11" th:id="|child${reply.id}|" />
+								<button type="button" class="col-1 badge btn btn-info" th:replyId="${reply.id}" th:onclick="replyChild(this.getAttribute('replyId'))">작성</button>
+							</div>
+						</div>
+					</div>
+					<div class="collapse mt-2" th:id="|modifyReply${reply.id}|">
+						<div class="card card-body">
+							<div class="row">
+								<input type="text" th:value="${reply.comment}" class="col-11" th:id="|mComment${reply.id}|" />
+								<button type="button" class="col-1 badge btn btn-warning" th:replyId="${reply.id}" th:boardId="${board.id}" th:onclick="replyModify(this.getAttribute('replyId'), this.getAttribute('boardId'))">수정</button>
+							</div>
+						</div>
+					</div>
+					<ul class="list-group list-group-flush" th:each="cReply : ${reply.childReplys}">
+						<li class="list-group-item">ㄴ <span th:text="${cReply.comment}" class="me-5">답글</span><span>작성자: <span th:text="${cReply.user.username}"></span></span></li>
+					</ul>
 				</li>
 			</ul>
 		</div>

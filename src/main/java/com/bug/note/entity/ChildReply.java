@@ -1,10 +1,12 @@
 package com.bug.note.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,22 +20,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-public class User extends BaseTime {
+public class ChildReply extends BaseTime {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable = false, length = 30, unique = true)
-	private String username;
+	private String comment;
 	
-	@Column(nullable = false, length = 100)
-	private String password;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reply_id")
+	private Reply reply;
 	
-	@Column(nullable = false, length = 50)
-	private String email;
-	
-	@Column(nullable = false, length = 15)
-	private String role;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 }

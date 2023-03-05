@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bug.note.entity.Board;
-import com.bug.note.repository.BoardRepository;
 import com.bug.note.service.BoardService;
 
 import lombok.RequiredArgsConstructor;

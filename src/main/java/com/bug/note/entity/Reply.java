@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -27,24 +26,25 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Board extends BaseTime {
-
+public class Reply extends BaseTime {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false)
-	private String title;
-	
-	@Column(nullable = false)
-	private String content;
+	private String comment;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@OrderBy(value = "id DESC")
-	@OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
-	@JsonIgnoreProperties({"board"})
-	private List<Reply> replys;
+	@ManyToOne
+	@JoinColumn(name = "board_id")
+	private Board board;
+	
+	@JsonIgnoreProperties({"reply"})
+	@OneToMany(mappedBy = "reply", fetch = FetchType.LAZY)
+	private List<ChildReply> childReplys;
+
 }
